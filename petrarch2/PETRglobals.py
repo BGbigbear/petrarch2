@@ -34,7 +34,7 @@
 VerbDict = {'verbs':{}, 'phrases':{}, 'transformations' : {}}  # verb dictionary
 ActorDict = {}  # actor dictionary
 ActorCodes = []  # actor code list
-AgentDict = {}  # agent dictionary
+AgentDict = {}  # agent dictionary (test)
 DiscardList = {}  # discard list
 IssueList = []
 IssueCodes = []
