@@ -48,7 +48,7 @@ It is possible to run PETRARCH-2 as a stand-alone program. Most of our
 development work has gone into incorporating PETRARCH-2 into a full pipeline of
 utilities, through, e.g., the [Phoenix pipeline](https://github.com/openeventdata/phoenix_pipeline).
 There's also a RESTful wrapper around PETRARCH and CoreNLP named
-[hypnos](https://github.com/caerusassociates/hypnos). It's probably worthwhile
+[hypnos](https://github.com/openeventdata/hypnos). It's probably worthwhile
 to explore those options before trying to use PETRARCH as a stand-alone. 
 
 That said, there are a variety of situations -- most notably those where you have already downloaded a set of 
@@ -108,7 +108,7 @@ We recommend [this dockerized API](http://github.com/chilland/ccnlp) if you need
 a CoreNLP parse into a script, or the Stanford website has a nice [web app](http://nlp.stanford.edu:8080/corenlp/),
  where if you select the "Pretty Print," output option, it'll give you the 
 syntactic parse in Treebank form. Or if you're not looking to edit Petrarch itself and just
-use its functionality, [hypnos](https://github.com/caerusassociates/hypnos) is an easier option.
+use its functionality, [hypnos](https://github.com/openeventdata/hypnos) is an easier option.
 
 Petrarch2 only runs in Python 2. Unfortunately, Python 3 is not supported and
 will fail with an opaque message.
@@ -137,7 +137,7 @@ When you run the program, a ``PETRARCH.log`` file will be opened in the current
 working directory. This file will contain general information, e.g., which
 files are being opened, and error messages.
 
-If you are doing near-real-time coding and need geolocation, you should probably use [hypnos](https://github.com/caerusassociates/hypnos) rather than run PETRARCH as a standalone program.
+If you are doing near-real-time coding and need geolocation, you should probably use [hypnos](https://github.com/openeventdata/hypnos) rather than run PETRARCH as a standalone program.
 
 Alternatively, see this
 [guide](https://andrewhalterman.com/2017/05/08/making-event-data-from-scratch-a-step-by-step-guide/)
@@ -176,7 +176,7 @@ Despite these differences, the aggregate distributions of events in CAMEO 2-digi
 
 ## Processing stories outside the pipeline
 
-hypnos and the Phoenix pipeline more generally are designed for [near-real-time processing] (https://en.wikipedia.org/wiki/Real-time_computing#Near_real-time) and consequently involve both
+hypnos and the Phoenix pipeline more generally are designed for [near-real-time processing](https://en.wikipedia.org/wiki/Real-time_computing#Near_real-time) and consequently involve both
 web scraping and dynamic storage of those results into a MongoDB database. While this is 
 appropriate when your source texts are coming immediately from the web, many applications of
 event data use texts which have already been downloaded -- typically from an aggregator such
