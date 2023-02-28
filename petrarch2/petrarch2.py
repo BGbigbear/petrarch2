@@ -64,6 +64,7 @@ def get_version():
 # ========================== OUTPUT/ANALYSIS FUNCTIONS ========================== #
 
 def open_tex(filename):
+    """ 打开一个文件 """
     fname = open(filename, 'w')
     '''fname.write('Run time: ',
     print("""
@@ -399,11 +400,11 @@ PETRARCH2
 
 
 def main():
-    cli_args = parse_cli_args()
-    utilities.init_logger('PETRARCH.log')
-    logger = logging.getLogger('petr_log')
+    cli_args = parse_cli_args()  # 获取命令中的参数
+    utilities.init_logger('PETRARCH.log')  # 创建 logger
+    logger = logging.getLogger('petr_log')  # 获取 logger对象
 
-    PETRglobals.RunTimeString = time.asctime()
+    PETRglobals.RunTimeString = time.asctime()  # 获取当前时间
 
     print(cli_args)
     if cli_args.config:
@@ -414,7 +415,7 @@ def main():
     else:
         logger.info('Using default config file.')
         PETRreader.parse_Config(utilities._get_data('data/config/',
-                                                    'PETR_config.ini'))
+                                                    'PETR_config.ini'))  # 读取默认配置文件
 
     if cli_args.nullverbs:
         print('Coding in null verbs mode; no events will be generated')

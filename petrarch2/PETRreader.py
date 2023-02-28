@@ -117,10 +117,10 @@ def parse_Config(config_path):
     if len(confdat) == 0:
         print(
             "\aError: Could not find the config file:",
-            PETRglobals.ConfigFileName)
+            PETRglobals.ConfigFileName)  # to be improved
         print("Terminating program")
         sys.exit()
-
+# Todo read
     try:
         PETRglobals.VerbFileName = parser.get('Dictionaries', 'verbfile_name')
         PETRglobals.AgentFileName = parser.get(

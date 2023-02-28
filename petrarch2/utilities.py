@@ -381,17 +381,17 @@ def _get_config(config_name):
 
 def init_logger(logger_filename):
 
-    logger = logging.getLogger('petr_log')
+    logger = logging.getLogger('petr_log')  # 定义名为 petr_log的记录器对象
     logger.setLevel(logging.INFO)
 
     cwd = os.getcwd()
-    logger_filepath = os.path.join(cwd, logger_filename)
+    logger_filepath = os.path.join(cwd, logger_filename)  # 指定 log路径
 
-    fh = logging.FileHandler(logger_filepath, 'w')
+    fh = logging.FileHandler(logger_filepath, 'w')  # 创建 log文件句柄
     formatter = logging.Formatter('%(levelname)s %(asctime)s: %(message)s')
-    fh.setFormatter(formatter)
+    fh.setFormatter(formatter)  # 设置格式
 
-    logger.addHandler(fh)
+    logger.addHandler(fh)  # 将句柄加入到 logger
     logger.info('Running')
 
 
