@@ -110,17 +110,17 @@ def parse_Config(config_path):
             return False
 
     print('\n', end=' ')
-    parser = ConfigParser()
+    parser = ConfigParser()  # parse .ini file
 #		logger.info('Found a config file in working directory')
 #	print "pc",PETRglobals.ConfigFileName
     confdat = parser.read(config_path)
     if len(confdat) == 0:
         print(
             "\aError: Could not find the config file:",
-            PETRglobals.ConfigFileName)  # to be improved
+            PETRglobals.ConfigFileName)  # to be improved (/a, bell)
         print("Terminating program")
         sys.exit()
-# Todo read
+
     try:
         PETRglobals.VerbFileName = parser.get('Dictionaries', 'verbfile_name')
         PETRglobals.AgentFileName = parser.get(

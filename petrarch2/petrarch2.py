@@ -415,7 +415,7 @@ def main():
     else:
         logger.info('Using default config file.')
         PETRreader.parse_Config(utilities._get_data('data/config/',
-                                                    'PETR_config.ini'))  # 读取默认配置文件
+                                                    'PETR_config.ini'))  # 读取默认配置文件 data/config/PETR_config.ini
 
     if cli_args.nullverbs:
         print('Coding in null verbs mode; no events will be generated')
@@ -473,7 +473,7 @@ def read_dictionaries(validation=False):
     print('Verb dictionary:', PETRglobals.VerbFileName)
     verb_path = utilities._get_data(
         'data/dictionaries',
-        PETRglobals.VerbFileName)
+        PETRglobals.VerbFileName)  # ./data/dictionaries/CAMEO.2.0.txt
     PETRreader.read_verb_dictionary(verb_path)
 
     print('Actor dictionaries:', PETRglobals.ActorFileList)
