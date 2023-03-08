@@ -850,14 +850,14 @@ def read_verb_dictionary(verb_path):
         elif line.startswith("####### VERB PATTERNS #######"):
             syn = 0
 
-        if not line.strip():
+        if not line.strip():  # blank line
             continue
 
-        if line.startswith("---"):#read block information
-            segs = line.split()
+        if line.startswith("---"):  # read block information
+            segs = line.split()  # e.g.---  CIRCULATE   [010]  ---
             block_meaning = segs[1]
-            block_code = segs[2]
-        elif line.startswith("-"):#read verb pattern
+            block_code = segs[2]  # Todo
+        elif line.startswith("-"):  # read verb pattern
             if not record_patterns:
                 continue
             pattern = line[1:].split("#")[0]

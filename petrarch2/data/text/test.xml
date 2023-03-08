@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sentences>
+<Sentence date="20180908" id="65567_1" sentence="True" source="NULL">
+<Text>
+一首歌，传唱至今，勾勒出多少人年轻时的回忆
+</Text>
+<Parse>
+(IP
+(NP
+(QP(CD一)
+(CLP(M首)))
+(NP(NN歌)))
+(PU，)
+(VP
+(VP(VV传唱)
+(NP(VV至今)))
+(PU，)
+(VP
+(VRD(VV勾勒)(VV出))
+(NP
+(DNP
+(LCP
+(IP
+(NP
+(QP(CD多少))
+(NP(NN人)))
+(VP(VA年轻)))
+(LC时))
+(DEG的))
+(NP(NN回忆))))))
+</Parse>
+</Sentence>
+</Sentences>
