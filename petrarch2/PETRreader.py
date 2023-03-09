@@ -720,7 +720,7 @@ def read_verb_dictionary(verb_path):
     syn = 1
 
     def resolve_synset(line):
-        '''
+        """
         this method resolve synset in the verb pattern recursively
 
         ===output===:
@@ -728,7 +728,7 @@ def read_verb_dictionary(verb_path):
 
         ===example===:
             * &SECURITY (OVER {&WEAPON ATTACK})                 [151]
-    
+
         First the function resolves synset SECURITY. For each word and its plural in SECURITY, the function resolves
         synset WEAPON.
         The output is:
@@ -737,10 +737,10 @@ def read_verb_dictionary(verb_path):
             * SECURITY (OVER {FLAMETHROWERS ATTACK})                 [151]
             * SECURITIES (OVER {FLAMETHROWERS ATTACK})                 [151]
             ......
-        '''
-        segs = line.split()
+        """
+        segs = line.split()  # e.g. ['*', '&SECURITY', '(OVER', '{&WEAPON', 'ATTACK})', '[151]']
         # print(line)
-        syns = filter(lambda a: '&' in a, segs)
+        syns = filter(lambda a: '&' in a, segs)  # ['&SECURITY', '{&WEAPON']
         lines = []
         if syns:
             set = syns[0].replace(
@@ -842,8 +842,9 @@ def read_verb_dictionary(verb_path):
             prep_pats.append((p, pnps))
         return nps, prep_pats
 
-
     for line in file:
+        if line == "- * &SECURITY (OVER {&WEAPON ATTACK})                 [151]         # ALERT\n":
+            print()
         if line.startswith("<!"):
             record_patterns = 0
             continue
@@ -856,11 +857,11 @@ def read_verb_dictionary(verb_path):
         if line.startswith("---"):  # read block information
             segs = line.split()  # e.g.---  CIRCULATE   [010]  ---
             block_meaning = segs[1]
-            block_code = segs[2]  # Todo
+            block_code = segs[2]
         elif line.startswith("-"):  # read verb pattern
-            if not record_patterns:
+            if not record_patterns:  # previous line start with '<!'
                 continue
-            pattern = line[1:].split("#")[0]
+            pattern = line[1:].split("#")[0]  # e.g. * PROPAGANDA  [053]
             # print(line)
             for pat in resolve_synset(pattern):
                 segs = pat.split("*")
@@ -918,7 +919,7 @@ def read_verb_dictionary(verb_path):
                     path = path.setdefault('*', {})
                     if post[0]: # post-verb noun phrase
                         count = 1
-                                        
+
                         for noun in post[0]:
                             if not isinstance(noun, tuple):
                                 path = path.setdefault(noun, {})
@@ -958,7 +959,7 @@ def read_verb_dictionary(verb_path):
             block_meaning = line.strip()
         elif syn and line.startswith("+"): #read SYNONYM SETS
             term = line.strip()[1:]
-            
+
             if "_" in term[-1] and "_" in term[:-1]:
                 temp = term[:-1]
                 if len(temp.replace("_", " ").split()) > 1:
@@ -971,7 +972,7 @@ def read_verb_dictionary(verb_path):
                     temp = "{" + temp.replace("_", " ") + "}"
             else:
                 temp = term
-            
+
             synsets[block_meaning] = synsets.setdefault(block_meaning, []) + [temp]
         elif line.startswith("~"):
             # VERB TRANSFORMATION
@@ -1891,7 +1892,7 @@ def read_actor_dictionary(actorfile):
 
 
             current_acts.append(actor)
-            
+
 
         line = read_FIN_line().strip()
 
