@@ -716,6 +716,7 @@ def read_verb_dictionary(verb_path):
     block_meaning = ""
     block_code = ""
     record_patterns = 1
+
     synsets = {}
     syn = 1
 
@@ -751,11 +752,11 @@ def read_verb_dictionary(verb_path):
             if set in synsets:
                 for word in synsets[set]:
                     # print(word)
-                    if '_' in word[-1]:
+                    if '_' in word[-1]:  # e.g. SECURITY_
                         baseword = word[0:-1]
-                    else:
+                    else:  # e.g. PROTECTION
                         baseword = word
-                    lines += resolve_synset(line.replace(set, baseword, 1))#resolve synset recursively
+                    lines += resolve_synset(line.replace(set, baseword, 1))  # resolve synset recursively
 
                     plural = make_plural_noun(word)
                     if plural:
@@ -861,7 +862,7 @@ def read_verb_dictionary(verb_path):
         elif line.startswith("-"):  # read verb pattern
             if not record_patterns:  # previous line start with '<!'
                 continue
-            pattern = line[1:].split("#")[0]  # e.g. * PROPAGANDA  [053]
+            pattern = line[1:].split("#")[0]  # e.g. * &PROPAGANDA  [053]
             # print(line)
             for pat in resolve_synset(pattern):
                 segs = pat.split("*")
@@ -875,7 +876,7 @@ def read_verb_dictionary(verb_path):
                 path = PETRglobals.VerbDict[
                     'phrases'].setdefault(block_meaning, {})
                 if not pre == ([], []):
-                    if pre[0]: # pre-verb noun phrase
+                    if pre[0]:  # pre-verb noun phrase
                         count = 1
 
                         for noun in pre[0]:
@@ -917,7 +918,7 @@ def read_verb_dictionary(verb_path):
 
                 if not post == ([], []):
                     path = path.setdefault('*', {})
-                    if post[0]: # post-verb noun phrase
+                    if post[0]:  # post-verb noun phrase
                         count = 1
 
                         for noun in post[0]:
@@ -934,7 +935,7 @@ def read_verb_dictionary(verb_path):
                             path = path.setdefault(",", {}) if not count == len(post[0]) else path
                             count += 1
 
-                    if post[1]: #post-verb prepositional phrase
+                    if post[1]:  #post-verb prepositional phrase
                         for phrase in post[1]:
                             head = phrase[0]
                             path = path.setdefault("|", {})
