@@ -1,0 +1,14 @@
+INFO 2023-03-13 20:32:47,805: Running
+INFO 2023-03-13 20:32:47,805: Using default config file.
+INFO 2023-03-13 20:32:47,806: Reading CAMEO.2.0.txt
+INFO 2023-03-13 20:32:49,091: Reading Phoenix.agents.txt
+
+WARNING 2023-03-13 20:32:49,102: Codes are required for agents in .agents file ; line skipped
+INFO 2023-03-13 20:32:49,104: Reading Phoenix.discards.txt
+INFO 2023-03-13 20:32:49,106: Reading Phoenix.IssueCoding.txt
+INFO 2023-03-13 20:32:49,130: ut.EP AFP0808020675_1 len(keylist) < 2 ['nouns']
+INFO 2023-03-13 20:32:49,133: 	Sentence discard.   1994
+INFO 2023-03-13 20:32:49,137: 	Sentence discard.   FRENCH PLAYING 1994
+INFO 2023-03-13 20:32:49,137: 	Sentence discard.   1994
+INFO 2023-03-13 20:32:49,139: ut.EP AFP0808021021_3 text not found. Target
+INFO 2023-03-13 20:32:49,140: ut.EP COOP_0 len(keylist) < 2 ['nouns']
