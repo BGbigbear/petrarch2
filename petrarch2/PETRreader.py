@@ -844,8 +844,8 @@ def read_verb_dictionary(verb_path):
         return nps, prep_pats
 
     for line in file:
-        if line == "- * &SECURITY (OVER {&WEAPON ATTACK})                 [151]         # ALERT\n":
-            print()
+        # if line == "- * &SECURITY (OVER {&WEAPON ATTACK})                 [151]         # ALERT\n":
+        #     print()
         if line.startswith("<!"):
             record_patterns = 0
             continue

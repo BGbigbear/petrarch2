@@ -720,7 +720,7 @@ def read_verb_dictionary(verb_path):
     syn = 1
 
     def resolve_synset(line):
-        '''
+        """
         this method resolve synset in the verb pattern recursively
 
         ===output===:
@@ -728,7 +728,7 @@ def read_verb_dictionary(verb_path):
 
         ===example===:
             * &SECURITY (OVER {&WEAPON ATTACK})                 [151]
-    
+
         First the function resolves synset SECURITY. For each word and its plural in SECURITY, the function resolves
         synset WEAPON.
         The output is:
@@ -737,7 +737,7 @@ def read_verb_dictionary(verb_path):
             * SECURITY (OVER {FLAMETHROWERS ATTACK})                 [151]
             * SECURITIES (OVER {FLAMETHROWERS ATTACK})                 [151]
             ......
-        '''
+        """
         segs = line.split()
         # print(line)
         syns = [a for a in segs if '&' in a]
@@ -755,7 +755,7 @@ def read_verb_dictionary(verb_path):
                         baseword = word[0:-1]
                     else:
                         baseword = word
-                    lines += resolve_synset(line.replace(set, baseword, 1))#resolve synset recursively
+                    lines += resolve_synset(line.replace(set, baseword, 1))  # resolve synset recursively
 
                     plural = make_plural_noun(word)
                     if plural:
@@ -841,8 +841,9 @@ def read_verb_dictionary(verb_path):
             prep_pats.append((p, pnps))
         return nps, prep_pats
 
-
     for line in file:
+        if line == "+STRIFE_\n":
+            pass
         if line.startswith("<!"):
             record_patterns = 0
             continue
@@ -852,11 +853,11 @@ def read_verb_dictionary(verb_path):
         if not line.strip():
             continue
 
-        if line.startswith("---"):#read block information
-            segs = line.split()
+        if line.startswith("---"):  # read block information
+            segs = line.split()  # e.g. ---  CIRCULATE   [010]  ---
             block_meaning = segs[1]
             block_code = segs[2]
-        elif line.startswith("-"):#read verb pattern
+        elif line.startswith("-"):  # read verb pattern
             if not record_patterns:
                 continue
             pattern = line[1:].split("#")[0]
@@ -873,7 +874,7 @@ def read_verb_dictionary(verb_path):
                 path = PETRglobals.VerbDict[
                     'phrases'].setdefault(block_meaning, {})
                 if not pre == ([], []):
-                    if pre[0]: # pre-verb noun phrase
+                    if pre[0]:  # pre-verb noun phrase
                         count = 1
 
                         for noun in pre[0]:
@@ -915,7 +916,7 @@ def read_verb_dictionary(verb_path):
 
                 if not post == ([], []):
                     path = path.setdefault('*', {})
-                    if post[0]: # post-verb noun phrase
+                    if post[0]:  # post-verb noun phrase
                         count = 1
                                         
                         for noun in post[0]:
@@ -953,22 +954,22 @@ def read_verb_dictionary(verb_path):
                                 count += 1
 
                 path["#"] = {'code': code[1:-1], 'line': line[:-1]}
-        elif syn and line.startswith("&"): #read SYNONYM SETS block information
+        elif syn and line.startswith("&"):  # read SYNONYM SETS block information
             block_meaning = line.strip()
-        elif syn and line.startswith("+"): #read SYNONYM SETS
+        elif syn and line.startswith("+"):  # read SYNONYM SETS
             term = line.strip()[1:]
             
-            if "_" in term[-1] and "_" in term[:-1]:
+            if "_" in term[-1] and "_" in term[:-1]:  # e.g. DIFFERENCE_OF_OPINION_
                 temp = term[:-1]
                 if len(temp.replace("_", " ").split()) > 1:
                     temp = "{" + temp.replace("_", " ") + "_}"
                 else:
                     temp = term
-            elif "_" not in term[-1] and "_" in term:
+            elif "_" not in term[-1] and "_" in term:  # e.g. BILLY_CLUB
                 temp = term
                 if len(temp.replace("_", " ").split()) > 1:
                     temp = "{" + temp.replace("_", " ") + "}"
-            else:
+            else:  # e.g. STRIFE_, WAR
                 temp = term
             
             synsets[block_meaning] = synsets.setdefault(block_meaning, []) + [temp]
@@ -1002,7 +1003,7 @@ def read_verb_dictionary(verb_path):
             back = []
             compound = 0
             stem = words[0]
-            if "_" in stem:
+            if "_" in stem:  # e.g. +ANGERED_BY
                 # We're dealing with a compound verb
                 #                print(stem)
                 segs = stem.split('+')
@@ -1011,23 +1012,23 @@ def read_verb_dictionary(verb_path):
                 stem = segs[1].split('_')[0]
                 compound = 1
 
-            if words[-1].startswith("["):
+            if words[-1].startswith("["):  # e.g. ['+ASK_FOR', '+ASKED_FOR', '+ASKING_FOR', '+ASKS_FOR', '[020]']
                 code = words.pop()
 
             if not (len(words) > 1 or '{' in word):
-
+                # plural
                 if stem.endswith("S") or stem.endswith("X") or stem.endswith("Z"):
                     words.append(stem + "ES")
                 elif stem.endswith("Y"):
                     words.append(stem[:-1] + "IES")
                 else:
                     words.append(stem + "S")
-
+                # past tense
                 if stem.endswith("E"):
                     words.append(stem + "D")
                 else:
                     words.append(stem + "ED")
-
+                # present continuous tense
                 if stem.endswith("E") and not stem[-2] in "AEIOU":
                     words.append(stem[:-1] + "ING")
                 else:
