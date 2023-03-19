@@ -775,29 +775,29 @@ def read_verb_dictionary(verb_path):
                 2. multi-word noun phrase is stored as a tuple (head, modifier list)
             prep_pats: prepositional phrases are stored as a tuple (preposition, noun phrase)
         '''
-        prepphrase = 0
-        nounphrase = 0
+        prepphrase = 0  # prep flag
+        nounphrase = 0  # noun flag
         nps = []
         head = ""
         modifiers = []
         index = 0
-        prepstarts = []
-        prepends = []
+        prepstarts = []  # start index
+        prepends = []  # end index
 
         for element in segment:
 
             # SKIP OVER PREPS, We consider these later
-            if element.endswith(")"):
+            if element.endswith(")"):  # 1
                 prepends.append(index)
                 if element.startswith("("):
                     prepstarts.append(index)
                 prepphrase = 0
 
-            elif element.startswith("("):
+            elif element.startswith("("):  # 2 TODO
                 prepstarts.append(index)
                 prepphrase = 1
 
-            elif not prepphrase:
+            elif not prepphrase:  # 3. outside the parenthesis TODO
                 # Find noun phrases
                 if element.endswith("}"):
                     nounphrase = 0
@@ -814,14 +814,14 @@ def read_verb_dictionary(verb_path):
 
             index += 1
 
-        preps = [segment[a[0]:a[1] + 1] for a in zip(prepstarts, prepends)]
+        preps = [segment[a[0]:a[1] + 1] for a in zip(prepstarts, prepends)]  # index -> prep
         prep_pats = []
         for phrase in preps:
             phrase = [a.replace("(", "").replace(")", "") for a in phrase]
-            p = phrase[0]
+            p = phrase[0]  # first part e.g. TO(TO BORDER)
             pnps = []
             pmodifiers = []
-            if len(phrase) > 1:
+            if len(phrase) > 1:  # TODO
 
                 head = ""
                 for element in phrase[1:]:
@@ -842,8 +842,6 @@ def read_verb_dictionary(verb_path):
         return nps, prep_pats
 
     for line in file:
-        if line == "+STRIFE_\n":
-            pass
         if line.startswith("<!"):
             record_patterns = 0
             continue
@@ -857,13 +855,13 @@ def read_verb_dictionary(verb_path):
             segs = line.split()  # e.g. ---  CIRCULATE   [010]  ---
             block_meaning = segs[1]
             block_code = segs[2]
-        elif line.startswith("-"):  # read verb pattern
+        elif line.startswith("-"):  # read verb pattern  e.g. - * AID   [070] # RUSH
             if not record_patterns:
                 continue
             pattern = line[1:].split("#")[0]
             # print(line)
             for pat in resolve_synset(pattern):
-                segs = pat.split("*")
+                segs = pat.split("*")  # use '*' as delimiter
 
                 pre = segs[0].split()
                 pre = resolve_patseg(pre)
@@ -873,7 +871,7 @@ def read_verb_dictionary(verb_path):
 
                 path = PETRglobals.VerbDict[
                     'phrases'].setdefault(block_meaning, {})
-                if not pre == ([], []):
+                if not pre == ([], []):  # TODO
                     if pre[0]:  # pre-verb noun phrase
                         count = 1
 
@@ -916,7 +914,7 @@ def read_verb_dictionary(verb_path):
 
                 if not post == ([], []):
                     path = path.setdefault('*', {})
-                    if post[0]:  # post-verb noun phrase
+                    if post[0]:  # post-verb noun phrase TODO
                         count = 1
                                         
                         for noun in post[0]:
@@ -933,13 +931,13 @@ def read_verb_dictionary(verb_path):
                             path = path.setdefault(",", {}) if not count == len(post[0]) else path
                             count += 1
 
-                    if post[1]: #post-verb prepositional phrase
+                    if post[1]:  # post-verb prepositional phrase
                         for phrase in post[1]:
-                            head = phrase[0]
+                            head = phrase[0]  # first part
                             path = path.setdefault("|", {})
                             path = path.setdefault(head, {})
                             count = 1
-                            for noun in phrase[1]:
+                            for noun in phrase[1]:  # TODO
                                 if not isinstance(noun, tuple):
                                     path = path.setdefault("-", {})
                                     path = path.setdefault(noun, {})
