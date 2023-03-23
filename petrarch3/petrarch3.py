@@ -427,7 +427,7 @@ def main():
     elif cli_args.nullactors:
         print('Coding in null actors mode; no events will be generated')
         logger.info(
-            'Coding in null verbs mode; no events will be generated')
+            'Coding in null actors mode; no events will be generated')
         # Only get actor phrases that are not in the dictionary but
         # associated with coded verb phrases
         PETRglobals.NullActors = True

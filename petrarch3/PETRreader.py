@@ -326,7 +326,7 @@ def read_FIN_line():
 	Note: the system doesn't use the formal definition that also says '--' is not allowed
 	inside a comment: it just looks for --> as a terminator
 
-	The system is *not* set up to handle clever variations like nested comments,  multiple
+	The system is *not* set up to handle clever variations like q comments,  multiple
 	comments on a line, or non-comment information in multi-line comments: yes, we are
 	perfectly capable of writing code that could handle these contingencies, but it
 	is not a priority at the moment. We trust you can cope within these limits.
@@ -346,7 +346,7 @@ def read_FIN_line():
     line = FIN.readline()
     FINnline += 1
     while True:
-        #		print '==',line,
+        # print '==',line,
         if len(line) == 0:
             break  # calling function needs to handle EOF
         # deal with simple lines we need to skip
@@ -793,11 +793,11 @@ def read_verb_dictionary(verb_path):
                     prepstarts.append(index)
                 prepphrase = 0
 
-            elif element.startswith("("):  # 2 TODO
+            elif element.startswith("("):
                 prepstarts.append(index)
                 prepphrase = 1
 
-            elif not prepphrase:  # 3. outside the parenthesis TODO
+            elif not prepphrase:  # 3. outside the parenthesis
                 # Find noun phrases
                 if element.endswith("}"):
                     nounphrase = 0
@@ -821,7 +821,7 @@ def read_verb_dictionary(verb_path):
             p = phrase[0]  # first part e.g. TO(TO BORDER)
             pnps = []
             pmodifiers = []
-            if len(phrase) > 1:  # TODO
+            if len(phrase) > 1:  # prepositional + noun phrase
 
                 head = ""
                 for element in phrase[1:]:
@@ -871,7 +871,7 @@ def read_verb_dictionary(verb_path):
 
                 path = PETRglobals.VerbDict[
                     'phrases'].setdefault(block_meaning, {})
-                if not pre == ([], []):  # TODO
+                if not pre == ([], []):
                     if pre[0]:  # pre-verb noun phrase
                         count = 1
 
@@ -885,12 +885,12 @@ def read_verb_dictionary(verb_path):
                                     path = path.setdefault("-", {})
                                     path = path.setdefault(element, {})
 
-                            path = path.setdefault(
+                            path = path.setdefault(  # different from other noun
                                 ",", {}) if not count == len(
                                 pre[0]) else path
                             count += 1
 
-                    if pre[1]: #pre-verb prepositional phrase
+                    if pre[1]:  # pre-verb prepositional phrase
                         path = path.setdefault("|", {})
                         for phrase in pre[1]:
                             head = phrase[0]
@@ -913,19 +913,19 @@ def read_verb_dictionary(verb_path):
                                 count += 1
 
                 if not post == ([], []):
-                    path = path.setdefault('*', {})
-                    if post[0]:  # post-verb noun phrase TODO
-                        count = 1
+                    path = path.setdefault('*', {})  # different from pre
+                    if post[0]:  # post-verb noun phrase
+                        count = 1  # number of noun
                                         
                         for noun in post[0]:
-                            if not isinstance(noun, tuple):
+                            if not isinstance(noun, tuple):  # single noun
                                 path = path.setdefault(noun, {})
                             else:
 
                                 head = noun[0]
                                 path = path.setdefault(head, {})
                                 for element in noun[1]:
-                                    path = path.setdefault("-", {})
+                                    path = path.setdefault("-", {})  # different from head and other element
                                     path = path.setdefault(element, {})
 
                             path = path.setdefault(",", {}) if not count == len(post[0]) else path
@@ -934,10 +934,10 @@ def read_verb_dictionary(verb_path):
                     if post[1]:  # post-verb prepositional phrase
                         for phrase in post[1]:
                             head = phrase[0]  # first part
-                            path = path.setdefault("|", {})
+                            path = path.setdefault("|", {})  # different from noun
                             path = path.setdefault(head, {})
                             count = 1
-                            for noun in phrase[1]:  # TODO
+                            for noun in phrase[1]:
                                 if not isinstance(noun, tuple):
                                     path = path.setdefault("-", {})
                                     path = path.setdefault(noun, {})
@@ -1798,19 +1798,19 @@ def read_actor_dictionary(actorfile):
 
     open_FIN(actorfile, "actor")
 
-    line = read_FIN_line().strip()
+    line = read_FIN_line().strip()  # read valid txt by line
     current_acts = []
     datelist = []
     while len(line) > 0:
-        #print(line)
-        if line[0] == '[':  # Date
+        # print(line)
+        if line[0] == '[':  # Date  e.g. [AFG], [AFGELI 320101-331108]
             data = line[1:-1].split()
             code = data[0]
-            if len(data)==1:
+            if len(data) == 1:
                 dates = []
             else:
                 try:
-                    datetemp = ("").join(data[1:])
+                    datetemp = "".join(data[1:])
                     if '-' in datetemp:
                         dates = datetemp.split('-')
                     else:
@@ -1819,16 +1819,16 @@ def read_actor_dictionary(actorfile):
                     dates = []
             datelist.append((code, dates))
         else:
-            if line[0] == '+':  # Synonym
+            if line[0] == '+':  # Synonym  e.g. +AFGHAN_
                 actor = line[1:].replace("_", ' ').split()
-            else:  # Base actor
+            else:  # Base actor  e.g. AFGHANISTAN_ [AFG]
                 # add previous actor entry to dictionary:
                 if PETRglobals.WriteActorRoot and len(
                         current_acts) > 0:  # store the root phrase if we're only to use it
                     datelist.append(current_acts[0])
                 for targ in current_acts:
                     actordict = PETRglobals.ActorDict
-                    while targ != []:
+                    while targ:
                         if targ[0] in [' ', '']:
                             targ = targ[1:]
                             continue
@@ -1849,33 +1849,33 @@ def read_actor_dictionary(actorfile):
                 datelist = []  # reset for the new actor
                 current_acts = []
                 temp = line.split('\t')
-                if len(temp)==1:
+                if len(temp) == 1:
                     temp = line.split()
 
-                if len(temp)==1:
+                if len(temp) == 1:  # actor
                     actortemp = line
                     datetemp = ""
-                elif len(temp)==2:
+                elif len(temp) == 2:  # actor + code
                     actortemp = temp[0]
                     datetemp = temp[1]
-                elif len(temp)>2:
-                    if line.find('[')==-1:
+                elif len(temp) > 2:  # actor + code + dates
+                    if line.find('[') == -1:
                         actortemp = line
                         datetemp = ""
                     else:
                         actortemp = line[0:line.find('[')]
                         datetemp = line[line.find('['):]
 
-                datestring = datetemp.strip().replace("\n","").split(']')
+                datestring = datetemp.strip().replace("\n", "").split(']')
                 for i in range(len(datestring)):
-                    if len(datestring[i])==0:
+                    if len(datestring[i]) == 0:
                         continue
 
                     data = datestring[i][datestring[i].find('[')+1:].split()
-                    code = data[0].replace(']','')
+                    code = data[0].replace(']', '')
 
                     try:
-                        date = data[1].replace(']','')
+                        date = data[1].replace(']', '')
                         if '-' in date:
                             dates = date.split('-')
                         else:
