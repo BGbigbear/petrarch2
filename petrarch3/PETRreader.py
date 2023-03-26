@@ -111,13 +111,13 @@ def parse_Config(config_path):
 
     print('\n', end=' ')
     parser = ConfigParser()  # parse .ini file
-#		logger.info('Found a config file in working directory')
-#	print "pc",PETRglobals.ConfigFileName
+    # logger.info('Found a config file in working directory')
+    # print "pc",PETRglobals.ConfigFileName
     confdat = parser.read(config_path)
     if len(confdat) == 0:
         print(
             "\aError: Could not find the config file:",
-            PETRglobals.ConfigFileName)  # to be improved (/a, bell)
+            PETRglobals.ConfigFileName)  # to be improved (\a, bell)
         print("Terminating program")
         sys.exit()
 
@@ -126,7 +126,7 @@ def parse_Config(config_path):
         PETRglobals.AgentFileName = parser.get(
             'Dictionaries',
             'agentfile_name')
-#		print "pc",PETRglobals.AgentFileName
+        # print "pc",PETRglobals.AgentFileName
         PETRglobals.DiscardFileName = parser.get(
             'Dictionaries',
             'discardfile_name')
@@ -503,9 +503,9 @@ def read_discard_list(discard_path):
         if '#' in line:
             line = line[:line.find('#')]
         targ = line.strip()
-        if targ.startswith('+'):
+        if targ.startswith('+'):  # story-level
             targ = targ[1:].upper() + ' +'
-        else:
+        else:  # sentence-level
             targ = targ.upper() + ' $'
 
         targ = targ.split()
@@ -617,11 +617,11 @@ def read_issue_list(issue_path):
         forms = [target]
         madechange = True
         while madechange:  # iterate until no more changes to make
-            ka = 0
+            ka = 0  # index of forms
             madechange = False
             while ka < len(forms):
                 if '+' in forms[ka]:
-                    str = forms[ka]
+                    str = forms[ka]  # versions with ' ' and '-'
                     forms[ka] = str.replace('+', ' ', 1)
                     forms.insert(ka + 1, str.replace('+', '-', 1))
                     madechange = True
@@ -916,7 +916,7 @@ def read_verb_dictionary(verb_path):
                     path = path.setdefault('*', {})  # different from pre
                     if post[0]:  # post-verb noun phrase
                         count = 1  # number of noun
-                                        
+
                         for noun in post[0]:
                             if not isinstance(noun, tuple):  # single noun
                                 path = path.setdefault(noun, {})
@@ -956,7 +956,7 @@ def read_verb_dictionary(verb_path):
             block_meaning = line.strip()
         elif syn and line.startswith("+"):  # read SYNONYM SETS
             term = line.strip()[1:]
-            
+
             if "_" in term[-1] and "_" in term[:-1]:  # e.g. DIFFERENCE_OF_OPINION_
                 temp = term[:-1]
                 if len(temp.replace("_", " ").split()) > 1:
@@ -969,7 +969,7 @@ def read_verb_dictionary(verb_path):
                     temp = "{" + temp.replace("_", " ") + "}"
             else:  # e.g. STRIFE_, WAR
                 temp = term
-            
+
             synsets[block_meaning] = synsets.setdefault(block_meaning, []) + [temp]
         elif line.startswith("~"):
             # VERB TRANSFORMATION
@@ -1726,13 +1726,13 @@ def dstr_to_ordate(datestring):
 		dstr_to_ordate("16010101")  # 2305814
 	"""
 
-# print datestring        # debug
+    # print datestring        # debug
     try:
-        if len(datestring) > 7:
+        if len(datestring) > 7:  # YYYYMMDD
             year = int(datestring[:4])
             month = int(datestring[4:6])
             day = int(datestring[6:8])
-        else:
+        else:  # YYMMDD
             year = int(datestring[:2])
             if year <= 30:
                 year += 2000
@@ -1742,7 +1742,7 @@ def dstr_to_ordate(datestring):
             day = int(datestring[4:6])
     except ValueError:
         raise DateError
-# print year, month, day    # debug
+    # print year, month, day    # debug
 
     if day <= 0:
         raise DateError
@@ -1767,7 +1767,7 @@ def dstr_to_ordate(datestring):
         if day > 31:
             raise DateError
 
-    if (month < 3):
+    if month < 3:
         adj = 1
     else:
         adj = 0
@@ -1889,7 +1889,7 @@ def read_actor_dictionary(actorfile):
 
 
             current_acts.append(actor)
-            
+
 
         line = read_FIN_line().strip()
 
@@ -2011,16 +2011,16 @@ def read_agent_dictionary(agent_path):
                 line.find('!') +
                 1:].find('!') < 0 or line[
                 line.find('!'):].find('=') < 0:
-            logger.warning(markdeferrorstr + enderrorstr)
+            logger.warning(markdeferrorstr + enderrorstr)  # mark def error
             return
         ka = line.find('!') + 1
         marker = line[ka:line.find('!', ka)]
-#		print marker
+        # print marker
         loclist = line[line.find('=', ka) + 1:].strip()
         subdict[marker] = []
         for item in loclist.split(','):
             subdict[marker].append(item.strip())
-#		print subdict[marker]
+        # print subdict[marker]
 
     def store_marker(agent, code):
         global subdict
@@ -2037,7 +2037,7 @@ def read_agent_dictionary(agent_path):
                            "! missing in .agents file; line skipped")
             return
         for subst in subdict[part2[0]]:
-            #			print part[0]+subst+part2[2]
+            # print part[0]+subst+part2[2]
             store_agent(part[0] + subst + part2[2], code)
 
     # this is just called when the program is loading, so keep them local.
@@ -2067,7 +2067,7 @@ def read_agent_dictionary(agent_path):
             line = read_FIN_line()
             continue
 
-        part = line.partition('[')
+        part = line.partition('[')  # agent + code
         code = part[2].partition(']')[0].strip()
         agent = part[0].strip() + ' '
         if '!' in part[0]:

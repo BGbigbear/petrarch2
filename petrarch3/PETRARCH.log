@@ -1,3 +1,8 @@
-INFO 2023-03-23 22:09:22,534: Running
-INFO 2023-03-23 22:09:22,535: Using default config file.
-INFO 2023-03-23 22:09:22,537: Reading CAMEO.2.0.txt
+INFO 2023-03-26 21:23:21,309: Running
+INFO 2023-03-26 21:23:21,310: Using default config file.
+INFO 2023-03-26 21:23:21,313: Reading CAMEO.2.0.txt
+INFO 2023-03-26 21:23:24,120: Reading Phoenix.agents.txt
+
+WARNING 2023-03-26 21:23:24,147: Codes are required for agents in .agents file ; line skipped
+INFO 2023-03-26 21:23:24,152: Reading Phoenix.discards.txt
+INFO 2023-03-26 21:23:24,155: Reading Phoenix.IssueCoding.txt

@@ -115,7 +115,7 @@ def check_discards(SentenceText):
        2 : story match [+ prefix]
     """
     sent = SentenceText.upper().split()  # case insensitive matching
-    #size = len(sent)
+    # size = len(sent)
     level = PETRglobals.DiscardList
     depart_index = [0]
     discardPhrase = ""
@@ -134,7 +134,7 @@ def check_discards(SentenceText):
         else:
             if len(depart_index) == 0:
                 continue
-            i = depart_index[0]
+            i = depart_index[0]  # ???
             level = PETRglobals.DiscardList
     return [0, '']
 
@@ -209,7 +209,7 @@ def do_coding(event_dict):
         for sent in val['sents']:
             NSent += 1
             if 'parsed' in event_dict[key]['sents'][sent]:
-                if 'config' in val['sents'][sent]:
+                if 'config' in val['sents'][sent]:  # story-level, not complete
                     for _, config in list(event_dict[key]['sents'][sent]['config'].items()):
                         change_Config_Options(config)
 
@@ -222,14 +222,14 @@ def do_coding(event_dict):
                 print("\n", SentenceID)
                 parsed = event_dict[key]['sents'][sent]['parsed']
                 treestr = parsed
-                disc = check_discards(SentenceText)
-                if disc[0] > 0:
+                disc = check_discards(SentenceText)  # check the discards
+                if disc[0] > 0:  # only 1 now Todo
                     if disc[0] == 1:
                         print("Discard sentence:", disc[1])
                         logger.info('\tSentence discard. {}'.format(disc[1]))
                         NDiscardSent += 1
                         continue
-                    else:
+                    else:  # story-level, not complete yet
                         print("Discard story:", disc[1])
                         logger.info('\tStory discard. {}'.format(disc[1]))
                         SkipStory = True
@@ -376,8 +376,8 @@ PETRARCH2
                                required=False)
 
     batch_command.add_argument('-o', '--outputs',
-                               help="""Filepath for the input XML file. Defaults to
-                               data/text/Gigaword.sample.PETR.xml""",
+                               help="""Filepath for the output txt file. Defaults to
+                               /events.PETR-Demo.txt""",
                                required=False)
 
     nulloptions = aparse.add_mutually_exclusive_group()
@@ -415,7 +415,7 @@ def main():
     else:
         logger.info('Using default config file.')
         PETRreader.parse_Config(utilities._get_data('data/config/',
-                                                    'PETR_config.ini'))  # 读取默认配置文件 data/config/PETR_config.ini
+                                                    'PETR_config.ini'))  # read default config file PETR_config.ini
 
     if cli_args.nullverbs:
         print('Coding in null verbs mode; no events will be generated')
@@ -502,7 +502,7 @@ def run(filepaths, out_file, s_parsed):
     # this is the routine called from main()
     events = PETRreader.read_xml_input(filepaths, s_parsed)
     if not s_parsed:
-        events = utilities.stanford_parse(events)
+        events = utilities.stanford_parse(events)  # not complete yet
     updated_events = do_coding(events)
     if PETRglobals.NullVerbs:
         PETRwriter.write_nullverbs(updated_events, 'nullverbs.' + out_file)

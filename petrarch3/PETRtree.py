@@ -1522,10 +1522,10 @@ class Sentence:
         self.events = []
         self.metadata = {'nouns': []}
         if PETRglobals.NullVerbs or PETRglobals.NullActors:
-            #            self.metadata['nulls'] = [] # is this still needed?
+            # self.metadata['nulls'] = [] # is this still needed?
             self.actoridx = 1  # index for null actors
 
-#--         print('si:==>',self.tree.get_parse_string())  # -- debug
+        # --         print('si:==>',self.tree.get_parse_string())  # -- debug
 
     def str_to_tree(self, str):
         """
@@ -1562,10 +1562,10 @@ class Sentence:
                     if lab == "EX":
                         existentials.append(new)
 
-                new.parent = level_stack[-1]
-                new.index = len(level_stack[-1].children)
-                level_stack[-1].children.append(new)
-                level_stack.append(new)
+                new.parent = level_stack[-1]  # parent of new node
+                new.index = len(level_stack[-1].children)  # the index of new node
+                level_stack[-1].children.append(new)  # child of parent
+                level_stack.append(new)  # append new node into stack
             elif element.endswith(")"):
                 try:
                     level_stack.pop()
@@ -1633,7 +1633,8 @@ class Sentence:
             print('--',ch.label, ch.get_text())"""
         if PETRglobals.NullVerbs or PETRglobals.NullActors:
             utilities.nulllist = []
-        events = [a.get_meaning() for a in [b for b in self.tree.children if b.label in "SVP"]]  # which is to say, label is (S or (VP
+        # which is to say, label is (S or (VP
+        events = [a.get_meaning() for a in [b for b in self.tree.children if b.label in "SVP"]]  # Todo prep, noun, verb
         """print('GF1',events) # --
         self.print_nouns('GF2') # -- """
         if PETRglobals.NullVerbs:
