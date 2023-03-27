@@ -251,12 +251,12 @@ class Phrase:
         """
         self.get_head = self.return_head
         try:
-            if self.label == 'S':
+            if self.label == 'S':  # Todo
                 self.head, self.head_phrase = [b.get_head() for b in [a for a in self.children if a.label == 'VP']][0]
                 return (self.head, self.head_phrase)
-            elif self.label == 'ADVP':
+            elif self.label == 'ADVP':  # Todo
                 return self.children[0].text, self
-            if (not self.label[1] == 'P'):
+            if (not self.label[1] == 'P'):  # Todo
                 return (self.text, self.parent)
 
             head_children = [child for child in self.children if child.label.startswith(
@@ -794,6 +794,7 @@ class VerbPhrase(Phrase):
         s_options = [a for a in self.children if a.label in "SBAR"]
 
         def resolve_events(event):
+
             """
             Helper method to combine events, accounting for
             missing sources, and  targets, passives, multiple-
@@ -1152,7 +1153,7 @@ class VerbPhrase(Phrase):
                 Code described by this verb, best read in hex
         """
 
-#        self.get_code = self.return_code
+        # self.get_code = self.return_code
         meta = []
         dict = PETRglobals.VerbDict['verbs']
         if 'AND' in [a.text for a in self.children]:
@@ -1634,7 +1635,7 @@ class Sentence:
         if PETRglobals.NullVerbs or PETRglobals.NullActors:
             utilities.nulllist = []
         # which is to say, label is (S or (VP
-        events = [a.get_meaning() for a in [b for b in self.tree.children if b.label in "SVP"]]  # Todo prep, noun, verb
+        events = [a.get_meaning() for a in [b for b in self.tree.children if b.label in "SVP"]]  # Todo S
         """print('GF1',events) # --
         self.print_nouns('GF2') # -- """
         if PETRglobals.NullVerbs:
