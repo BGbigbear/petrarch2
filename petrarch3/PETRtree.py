@@ -250,25 +250,25 @@ class Phrase:
 
         """
         self.get_head = self.return_head
-        try:
-            if self.label == 'S':  # Todo
+        try:  # child's text and itself
+            if self.label == 'S':  # SVP
                 self.head, self.head_phrase = [b.get_head() for b in [a for a in self.children if a.label == 'VP']][0]
                 return (self.head, self.head_phrase)
-            elif self.label == 'ADVP':  # Todo
+            elif self.label == 'ADVP':
                 return self.children[0].text, self
-            if (not self.label[1] == 'P'):  # Todo
+            if (not self.label[1] == 'P'):
                 return (self.text, self.parent)
 
             head_children = [child for child in self.children if child.label.startswith(
-                    self.label[0]) and not child.label[1] == 'P']
+                    self.label[0]) and not child.label[1] == 'P']  # the same label with parent and not phrase
             if head_children:
                 possibilities = [_f for _f in [a.get_head() for a in head_children] if _f]
-            else:
+            else:  # not found, deep into other child (phrase)
                 other_children = [child for child in self.children if child.label.startswith(
                         self.label[0])]
                 possibilities = [_f for _f in [a.get_head() for a in other_children] if _f]
 
-            self.head_phrase = possibilities[-1][1]
+            self.head_phrase = possibilities[-1][1]  # the rightmost
             # return the last, English usually compounds words to the front
             self.head = possibilities[-1][0]
             return possibilities[-1]
@@ -307,13 +307,13 @@ class NounPhrase(Phrase):
             if isinstance(child, PrepPhrase):
                 # --                print('NPgt-PP:',child.text)  # --
                 m = self.resolve_codes(child.get_meaning())
-                if m[0]:
+                if m[0]:  # actor_codes
                     PPcodes += child.get_meaning()
                 else:
                     text += " " + child.get_text()
             if isinstance(child, NounPhrase):
                 # --                print('NPgt-NP:',child.text)  # --
-                value = child.get_text()
+                value = child.get_text()  # recur
                 text += value[0]
                 PPcodes += value[1]
             if child.label[:2] in ["JJ", "NN", "DT"]:
@@ -470,7 +470,7 @@ class NounPhrase(Phrase):
                 value = child.get_text()
                 text_children += value[0].split()
                 NPcodes += value[1]
-            elif child.label[:2] in ["JJ", "DT", "NN"]:
+            elif child.label[:2] in ["JJ", "DT", "NN"]:  # JJ:adjective DT:determiner(限定词)
                 text_children += child.get_text().split()
 
             elif child.label == "PP":
@@ -491,14 +491,14 @@ class NounPhrase(Phrase):
                         pass
                         # We could add the subtree here, but there shouldn't be
                         # any codes with VP components
-            elif child.label == "PRP":
+            elif child.label == "PRP":  # PRP:personal pronoun
                 # Find antecedent
                 # --                print('NPgm-PRP:',child.text)  # --
                 not_found = True
                 level = self.parent
                 local = True
                 reflexive = child.text.endswith(
-                    "SELF") or child.text.endswith("SELVES")
+                    "SELF") or child.text.endswith("SELVES")  # 反身的
                 while not_found and level.parent:
                     if level.label.startswith(
                             "NP") and reflexive:  # Intensive, ignore
@@ -700,7 +700,7 @@ class VerbPhrase(Phrase):
 
         """
         try:
-            if self.children[0].label == "VBN":
+            if self.children[0].label == "VBN":  # past participle
                 helping = ["HAVE", "HAD", "HAVING", "HAS"]
                 if ((not (self.parent.get_head()[0] in helping or self.parent.children[0].text in helping)) and
                     len([a for a in self.parent.children if isinstance(a, VerbPhrase)]) <= 1 and
@@ -783,7 +783,7 @@ class VerbPhrase(Phrase):
         time1 = time.time()
         self.get_meaning = self.return_meaning
 
-        c, passive, meta = self.get_code()
+        c, passive, meta = self.get_code()  # c:code
         """print('VP-gm-0:',self.get_text())
         print('VP-gm-1:',c, meta)"""
         if c:
@@ -820,7 +820,7 @@ class VerbPhrase(Phrase):
                 if passive:
                     for item in first:
                         e2 = ([second], item, passive)
-                        self.sentence.metadata[id(e2)] = [event, meta, 7]
+                        self.sentence.metadata[id(e2)] = [event, meta, 7]  # event is not tuple
                         returns.append(e2)
             elif event[1] == 'passive':
                 first = event[0]
@@ -829,7 +829,7 @@ class VerbPhrase(Phrase):
                     returns = []
                     for source in up:
                         e = (first, source, third)
-                        self.sentence.metadata[id(e)] = [event, up, 1]
+                        self.sentence.metadata[id(e)] = [event, up, 1]  # passive and up
                         returns.append(e)
                     return returns
                 second = 'passive'
@@ -840,7 +840,7 @@ class VerbPhrase(Phrase):
                 second = event[1]
                 third = utilities.combine_code(c, event[2])
             e = (first, second, third)
-            self.sentence.metadata[id(e)] = [event, c, meta, 2]
+            self.sentence.metadata[id(e)] = [event, c, meta, 2]  # Not above situation
             return returns + [e]
 
         events = []
@@ -867,12 +867,12 @@ class VerbPhrase(Phrase):
                         i,
                         c if self.check_passive() else passive)
                     events.append(e)
-                    self.sentence.metadata[id(e)] = [None, e, meta, 3]
+                    self.sentence.metadata[id(e)] = [None, e, meta, 3]  # source_options are found
                     self.meaning = events
                     return events
 
         up = "" if up in ['', [], [""], ["~"], ["~~"]] else up
-        low, neg = self.get_lower()
+        low, neg = self.get_lower()  # 1
         if not low:
             low = ""
         if neg:
@@ -881,21 +881,22 @@ class VerbPhrase(Phrase):
         if isinstance(low, list):
             for event in low:
                 events += resolve_events(event)
-        elif not s_options:
+        elif not s_options:  # No SBAR
             if up or c:
                 e = (up, low, c)
-                self.sentence.metadata[id(e)] = [None, e, 4]
+                self.sentence.metadata[id(e)] = [None, e, 4]  # lower from 1st way
                 events.append(e)
             elif low:
                 events.append(low)
 
-        lower = [a.get_meaning() for a in s_options]
+        lower = [a.get_meaning() for a in s_options]  # 2
         sents = []
 
         for item in lower:
             sents += item
 
-        if sents and not events:  # Only if nothing else has been found do we look at lower NP's?
+        if sents and not events:  # lower from 2nd way
+                                  # Only if nothing else has been found do we look at lower NP's?
                                   # This decreases our coding frequency, but
                                   # removes many false positives
             for event in sents:
@@ -905,25 +906,25 @@ class VerbPhrase(Phrase):
                             for item in ev[1]:
                                 local = (ev[0], item, ev[2])
                                 self.sentence.metadata[id(local)] = [
-                                    ev, item, 5]
+                                    ev, item, 5]  # lower from 2nd way
                                 events.append(local)
                         else:
                             events += resolve_events(event)
 # --        print('@@-1',events)
         if events and isinstance(events[0], tuple):
             # --            print('@@-2',events[0])
-            if events[0][0] and events[0][1] and not events[0][2]:
-                utilities.nulllist.append((curparse, events[0]))
+            if events[0][0] and events[0][1] and not events[0][2]:  # 0, maybe passive? I don't know
+                utilities.nulllist.append((curparse, events[0]))  # used when PETRglobals.NullVerbs == True
 # --                print('@@-3',utilities.nulllist)
 
         maps = []
         for i in events:
             evs = self.match_transform(i)
-            if isinstance(evs, tuple):
+            if isinstance(evs, tuple):  # event and line
                 for j in evs[0]:
                     maps.append(j)
-                    self.sentence.metadata[id(j)] = [i, evs[1], 6]
-            else:
+                    self.sentence.metadata[id(j)] = [i, evs[1], 6]  # transform
+            else:  # list
                 maps += evs
         self.meaning = maps
         return maps
@@ -951,8 +952,8 @@ class VerbPhrase(Phrase):
         """
 # --          print('cp-entry')
         self.check_passive = self.return_passive
-        if True:
-            if self.children[0].label in ["VBD", "VBN"]:
+        if True:  # :|
+            if self.children[0].label in ["VBD", "VBN"]:  # past tense, past participle
                 level = self.parent
                 if level.label == "NP":
                     self.passive = True
@@ -1160,7 +1161,7 @@ class VerbPhrase(Phrase):
             return 0, 0, ['and']
         patterns = PETRglobals.VerbDict['phrases']
         verb = "TO" if self.children[0].label == "TO" else self.get_head()[0]
-        meta.append(verb)
+        meta.append(verb)  # record verb
         meaning = ""
         path = dict
         passive = False
@@ -1184,7 +1185,7 @@ class VerbPhrase(Phrase):
                 # Post - compounds
                 for child in self.children:
                     if child.label in ["PRT", "ADVP"]:
-                        if child.children[0].text in path:
+                        if child.children[0].text in path:  # match the whole compound verb
                             meta.append(child.children[0].text)
                             path = path[child.children[0].text]
                 if "#" in path:
@@ -1210,6 +1211,7 @@ class VerbPhrase(Phrase):
             self.code = active
         if passive and not active:
             self.check_passive = lambda: True
+
             self.code = passive
         return self.code, passive, meta
 
@@ -1333,11 +1335,11 @@ class VerbPhrase(Phrase):
                 subpath = path[item.text]
                 match = reroute(
                     subpath, lambda a: match_phrase(
-                        a, item.head_phrase))
+                        a, item.head_phrase))  # next node
                 if match:
                     item.color = True
                     return match
-            return reroute(path, lambda a: match_phrase(a, phrase.head_phrase))
+            return reroute(path, lambda a: match_phrase(a, phrase.head_phrase))  # not matched, reroute to head
 
         def match_noun(path, phrase=self if not self.check_passive()
                        else self.get_S(), preplimit=0):
@@ -1346,7 +1348,7 @@ class VerbPhrase(Phrase):
             noun_phrases = []
             if not phrase:
                 return False
-            if preplimit:
+            if preplimit:  # passive, PP
                 for sib in phrase.children:
                     if isinstance(sib, PrepPhrase) and len(
                             sib.children) > 1 and sib.get_prep() in ["BY", "FROM"]:
@@ -1368,7 +1370,7 @@ class VerbPhrase(Phrase):
                     skip = lambda a: False
                     match = reroute(
                         subpath, skip, skip, lambda a: match_prep(
-                            a, item), skip, 0)
+                            a, item), skip, 0)  # only PP
                     if match:
                         headphrase.children[-1].color = True
                         return match
@@ -1379,7 +1381,7 @@ class VerbPhrase(Phrase):
                     if match:
                         headphrase.children[-1].color = True
                         return match
-            if '^' in path:
+            if '^' in path:  # anything
                 phrase.color = True
 # --                  print('mn-reroute1')
                 return reroute(path['^'], lambda a: match_phrase(
@@ -1635,7 +1637,7 @@ class Sentence:
         if PETRglobals.NullVerbs or PETRglobals.NullActors:
             utilities.nulllist = []
         # which is to say, label is (S or (VP
-        events = [a.get_meaning() for a in [b for b in self.tree.children if b.label in "SVP"]]  # Todo S
+        events = [a.get_meaning() for a in [b for b in self.tree.children if b.label in "SVP"]]
         """print('GF1',events) # --
         self.print_nouns('GF2') # -- """
         if PETRglobals.NullVerbs:

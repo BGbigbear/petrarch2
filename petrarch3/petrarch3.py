@@ -155,7 +155,7 @@ def get_issues(SentenceText):
         return False
 
     sent = SentenceText.upper().split()  # case insensitive matching
-    issues = []
+    issues = []  # record the number of issue_code
 
     index = 0
     while index < len(sent):
@@ -223,7 +223,7 @@ def do_coding(event_dict):
                 parsed = event_dict[key]['sents'][sent]['parsed']
                 treestr = parsed
                 disc = check_discards(SentenceText)  # check the discards
-                if disc[0] > 0:  # only 1 now Todo
+                if disc[0] > 0:  # only 1 now
                     if disc[0] == 1:
                         print("Discard sentence:", disc[1])
                         logger.info('\tSentence discard. {}'.format(disc[1]))
@@ -257,9 +257,9 @@ def do_coding(event_dict):
                     # this is potentially confusing, so it probably would be useful to
                     # change one of those
 
-                del(sentence)
+                del(sentence)  # delete sentence when it is disposed
                 times += code_time
-                sents += 1
+                sents += 1  # count processed sentence
                 # print('\t\t',code_time)
 
                 if coded_events:
@@ -289,7 +289,7 @@ def do_coding(event_dict):
                                         'actorroot'][evt] = text_dict[evt][3:5]
 
                 if coded_events and PETRglobals.IssueFileName != "":
-                    event_issues = get_issues(SentenceText)
+                    event_issues = get_issues(SentenceText)  # get issue code
                     if event_issues:
                         event_dict[key]['sents'][sent]['issues'] = event_issues
 

@@ -146,7 +146,7 @@ def extract_phrases(sent_dict, sent_id):
 # --        print('gnl: ',sent_dict['meta']['nouns'])
         noun_list = []
         for ca in sent_dict['meta']['nouns']:  #
-            if len(ca[1]) == 1:
+            if len(ca[1]) == 1:  # single code
                 noun_list.append(ca)
             else:
                 for ka in range(len(ca[1])):
@@ -164,7 +164,7 @@ def extract_phrases(sent_dict, sent_id):
         return noun_list
 
     def get_actor_phrase(code, typest):
-        if code.startswith('---'):
+        if code.startswith('---'):  # where is typest uesed in
             code = '~' + code[3:]
         noun_list = get_noun_list()
 
